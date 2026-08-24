@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Watch multiple YouTube videos together in one clean dashboard." />
+  <title>MultiView — YouTube Wall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="MultiView home">
+      <span class="brand-mark"><span></span><span></span><span></span><span></span></span>
+      <span>MultiView</span>
+    </a>
+    <div class="status"><span class="status-dot"></span><span id="videoCount">0 videos loaded</span></div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">YOUR PERSONAL VIDEO WALL</p>
+        <h1>Watch more.<br><span>All at once.</span></h1>
+        <p class="intro">Paste YouTube links below and turn them into a synchronized, endlessly looping video wall.</p>
+      </div>
+
+      <div class="composer">
+        <div class="composer-heading">
+          <div><span class="step">01</span><h2>Add your videos</h2></div>
+          <button id="clearButton" class="text-button" type="button">Clear all</button>
+        </div>
+        <label for="videoLinks">YouTube links <span>— one per line</span></label>
+        <textarea id="videoLinks" rows="6" spellcheck="false" placeholder="https://www.youtube.com/watch?v=...&#10;https://youtu.be/...&#10;https://www.youtube.com/shorts/..."></textarea>
+        <div id="inputMessage" class="input-message" aria-live="polite"></div>
+        <button id="loadButton" class="primary-button" type="button">
+          <span>Build my video wall</span><span class="arrow">↗</span>
+        </button>
+        <p class="composer-note">Autoplay starts muted due to browser rules. Use Play all to enable sound.</p>
+      </div>
+    </section>
+
+    <section id="wallSection" class="wall-section" hidden>
+      <div class="wall-heading">
+        <div><span class="step">02</span><h2>Your video wall</h2></div>
+        <div class="layout-control" aria-label="Grid columns">
+          <button data-columns="1" title="One column">▭</button>
+          <button data-columns="2" class="active" title="Two columns">▦</button>
+          <button data-columns="3" title="Three columns">▦</button>
+          <button data-columns="auto" title="Auto layout">Auto</button>
+        </div>
+      </div>
+      <div id="videoGrid" class="video-grid columns-2"></div>
+    </section>
+  </main>
+
+  <div id="controlDock" class="control-dock" hidden>
+    <button id="playAll" class="dock-primary" type="button"><span id="playIcon">▶</span><span id="playLabel">Play all</span></button>
+    <div class="divider"></div>
+    <button id="muteAll" class="icon-button" type="button" title="Mute all" aria-label="Mute all">🔇</button>
+    <input id="volume" type="range" min="0" max="100" value="70" aria-label="Volume for all videos" />
+    <output id="volumeValue">70%</output>
+    <div class="divider"></div>
+    <label class="toggle-label"><input id="loopToggle" type="checkbox" checked><span class="toggle"></span>Loop all</label>
+  </div>
+
+  <footer><span>MultiView</span><span>Made for focused watching · YouTube embeds only</span></footer>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="app.js"></script>
+</body>
+</html>
