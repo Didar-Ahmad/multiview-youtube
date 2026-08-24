@@ -38,7 +38,7 @@
         <button id="loadButton" class="primary-button" type="button">
           <span>Build my video wall</span><span class="arrow">↗</span>
         </button>
-        <p class="composer-note">Add up to 20 videos. Autoplay starts muted due to browser rules; use Play all to enable sound.</p>
+        <p class="composer-note">Add up to 20 videos. Each video starts only when you click its native YouTube Play button.</p>
       </div>
     </section>
 
@@ -57,7 +57,7 @@
   </main>
 
   <div id="controlDock" class="control-dock" hidden>
-    <button id="playAll" class="dock-primary" type="button"><span id="playIcon">▶</span><span id="playLabel">Play all</span></button>
+    <button id="playAll" class="dock-primary" type="button" title="Scripted playback may not count as YouTube views"><span id="playIcon">▶</span><span id="playLabel">Play all (scripted)</span></button>
     <div class="divider"></div>
     <button id="muteAll" class="icon-button" type="button" title="Mute all" aria-label="Mute all">🔇</button>
     <input id="volume" type="range" min="0" max="100" value="70" aria-label="Volume for all videos" />

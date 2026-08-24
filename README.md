@@ -1,6 +1,6 @@
 # MultiView
 
-A static, Vercel-ready multi-YouTube viewer. Paste up to 20 YouTube links, autoplay them in a responsive grid, control play, mute, volume, and looping together, then copy one shareable link that reopens the entire wall.
+A static, Vercel-ready multi-YouTube viewer. Paste up to 20 YouTube links, start each with its native YouTube Play button, control mute, volume, and looping together, then copy one shareable link that reopens the entire wall.
 
 ## Deploy to Vercel
 

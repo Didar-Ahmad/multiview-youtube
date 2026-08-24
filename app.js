@@ -65,9 +65,9 @@ function createPlayer(id, index) {
 
   const player = new YT.Player(`player-${index}`, {
     videoId: id,
-    playerVars: { autoplay: 1, mute: 1, controls: 1, rel: 0, playsinline: 1, modestbranding: 1 },
+    playerVars: { autoplay: 0, controls: 1, rel: 0, playsinline: 1, modestbranding: 1 },
     events: {
-      onReady: event => { event.target.mute(); event.target.setVolume(Number(volume.value)); event.target.playVideo(); },
+      onReady: event => { event.target.setVolume(Number(volume.value)); },
       onStateChange: event => {
         if (event.data === YT.PlayerState.ENDED && loopToggle.checked) { event.target.seekTo(0); event.target.playVideo(); }
       }
@@ -86,8 +86,8 @@ function buildWall(ids, scroll = true) {
   updateCount();
   if (!videoIds.length) return;
   waitForAPI(() => videoIds.forEach(createPlayer));
-  allPlaying = true;
-  allMuted = true;
+  allPlaying = false;
+  allMuted = false;
   syncControlLabels();
   if (scroll) wallSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -126,7 +126,7 @@ function removeVideo(id) {
 }
 
 function syncControlLabels() {
-  playLabel.textContent = allPlaying ? 'Pause all' : 'Play all';
+  playLabel.textContent = allPlaying ? 'Pause all' : 'Play all (scripted)';
   playIcon.textContent = allPlaying ? 'Ⅱ' : '▶';
   muteButton.textContent = allMuted ? '🔇' : '🔊';
   muteButton.title = allMuted ? 'Unmute all' : 'Mute all';
