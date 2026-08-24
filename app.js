@@ -16,12 +16,19 @@ const volumeValue = document.querySelector('#volumeValue');
 const loopToggle = document.querySelector('#loopToggle');
 const shareButton = document.querySelector('#shareWall');
 const linkCounter = document.querySelector('#linkCounter');
+const countDialog = document.querySelector('#countDialog');
+const countDialogNote = document.querySelector('#countDialogNote');
+const playCount = document.querySelector('#playCount');
+const decreaseCount = document.querySelector('#decreaseCount');
+const increaseCount = document.querySelector('#increaseCount');
+const confirmCount = document.querySelector('#confirmCount');
 
 let apiReady = false;
 let players = [];
 let videoIds = [];
 let allPlaying = false;
 let allMuted = true;
+let pendingVideoIds = [];
 
 window.onYouTubeIframeAPIReady = () => { apiReady = true; };
 
@@ -87,14 +94,16 @@ function buildWall(ids, scroll = true) {
 
 function loadLinks() {
   const lines = linksInput.value.split(/\n|,/).map(v => v.trim()).filter(Boolean);
-  const ids = lines.map(extractVideoId).filter(Boolean);
+  const ids = [...new Set(lines.map(extractVideoId).filter(Boolean))].slice(0, 20);
   if (!lines.length) { message.textContent = 'Paste at least one YouTube link first.'; linksInput.focus(); return; }
   if (!ids.length) { message.textContent = 'No valid YouTube links were found.'; return; }
-  const skipped = lines.length - ids.length;
-  message.textContent = ids.length > 20
-    ? `${ids.length - 20} extra video(s) skipped. Maximum 20 videos.`
-    : skipped ? `${skipped} invalid link(s) skipped.` : '';
-  buildWall(ids);
+  const skipped = lines.length - lines.map(extractVideoId).filter(Boolean).length;
+  message.textContent = skipped ? `${skipped} invalid link(s) skipped.` : '';
+  pendingVideoIds = ids;
+  playCount.max = String(ids.length);
+  playCount.value = String(ids.length);
+  countDialogNote.textContent = `${ids.length} different valid video${ids.length === 1 ? '' : 's'} found. Choose how many to play.`;
+  countDialog.showModal();
 }
 
 async function copyShareLink() {
@@ -124,6 +133,14 @@ function syncControlLabels() {
 }
 
 loadButton.addEventListener('click', loadLinks);
+decreaseCount.addEventListener('click', () => { playCount.value = String(Math.max(1, Number(playCount.value) - 1)); });
+increaseCount.addEventListener('click', () => { playCount.value = String(Math.min(Number(playCount.max), Number(playCount.value) + 1)); });
+confirmCount.addEventListener('click', event => {
+  event.preventDefault();
+  const count = Math.max(1, Math.min(Number(playCount.max), Number(playCount.value) || 1));
+  countDialog.close();
+  buildWall(pendingVideoIds.slice(0, count));
+});
 clearButton.addEventListener('click', () => { linksInput.value = ''; message.textContent = ''; buildWall([], false); });
 playButton.addEventListener('click', () => {
   allPlaying = !allPlaying;

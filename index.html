@@ -68,6 +68,22 @@
     <button id="shareWall" class="share-button" type="button">🔗 Copy share link</button>
   </div>
 
+  <dialog id="countDialog" class="count-dialog">
+    <form method="dialog">
+      <button class="dialog-close" value="cancel" aria-label="Close">×</button>
+      <span class="step">03</span>
+      <h2>How many videos?</h2>
+      <p id="countDialogNote">Choose how many different videos you want to play.</p>
+      <label for="playCount">Number of videos</label>
+      <div class="count-picker">
+        <button id="decreaseCount" type="button" aria-label="Decrease">−</button>
+        <input id="playCount" type="number" min="1" max="20" value="1" inputmode="numeric">
+        <button id="increaseCount" type="button" aria-label="Increase">+</button>
+      </div>
+      <button id="confirmCount" class="primary-button" value="default"><span>Play selected videos</span><span class="arrow">↗</span></button>
+    </form>
+  </dialog>
+
   <footer><span>MultiView</span><span>Made for focused watching · YouTube embeds only</span></footer>
 
   <script src="https://www.youtube.com/iframe_api"></script>
