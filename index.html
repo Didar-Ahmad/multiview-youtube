@@ -32,13 +32,13 @@
           <div><span class="step">01</span><h2>Add your videos</h2></div>
           <button id="clearButton" class="text-button" type="button">Clear all</button>
         </div>
-        <label for="videoLinks">YouTube links <span>— one per line</span></label>
+        <div class="input-label-row"><label for="videoLinks">YouTube links <span>— one per line</span></label><span id="linkCounter" class="link-counter">0 / 20 videos</span></div>
         <textarea id="videoLinks" rows="6" spellcheck="false" placeholder="https://www.youtube.com/watch?v=...&#10;https://youtu.be/...&#10;https://www.youtube.com/shorts/..."></textarea>
         <div id="inputMessage" class="input-message" aria-live="polite"></div>
         <button id="loadButton" class="primary-button" type="button">
           <span>Build my video wall</span><span class="arrow">↗</span>
         </button>
-        <p class="composer-note">Autoplay starts muted due to browser rules. Use Play all to enable sound.</p>
+        <p class="composer-note">Add up to 20 videos. Autoplay starts muted due to browser rules; use Play all to enable sound.</p>
       </div>
     </section>
 

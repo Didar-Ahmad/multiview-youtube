@@ -15,6 +15,7 @@ const volume = document.querySelector('#volume');
 const volumeValue = document.querySelector('#volumeValue');
 const loopToggle = document.querySelector('#loopToggle');
 const shareButton = document.querySelector('#shareWall');
+const linkCounter = document.querySelector('#linkCounter');
 
 let apiReady = false;
 let players = [];
@@ -72,8 +73,9 @@ function buildWall(ids, scroll = true) {
   players.forEach(player => { try { player.destroy(); } catch (_) {} });
   players = [];
   grid.innerHTML = '';
-  videoIds = [...new Set(ids)].slice(0, 15);
+  videoIds = [...new Set(ids)].slice(0, 20);
   localStorage.setItem('multiview-videos', JSON.stringify(videoIds));
+  updateLinkCounter();
   updateCount();
   if (!videoIds.length) return;
   waitForAPI(() => videoIds.forEach(createPlayer));
@@ -89,8 +91,8 @@ function loadLinks() {
   if (!lines.length) { message.textContent = 'Paste at least one YouTube link first.'; linksInput.focus(); return; }
   if (!ids.length) { message.textContent = 'No valid YouTube links were found.'; return; }
   const skipped = lines.length - ids.length;
-  message.textContent = ids.length > 15
-    ? `${ids.length - 15} extra video(s) skipped. Maximum 15 videos.`
+  message.textContent = ids.length > 20
+    ? `${ids.length - 20} extra video(s) skipped. Maximum 20 videos.`
     : skipped ? `${skipped} invalid link(s) skipped.` : '';
   buildWall(ids);
 }
@@ -146,10 +148,18 @@ document.querySelectorAll('[data-columns]').forEach(button => button.addEventLis
 }));
 
 const shared = new URLSearchParams(window.location.search).get('videos')
-  ?.split(',').map(id => id.trim()).filter(id => /^[\w-]{11}$/.test(id)).slice(0, 15) || [];
+  ?.split(',').map(id => id.trim()).filter(id => /^[\w-]{11}$/.test(id)).slice(0, 20) || [];
 const saved = JSON.parse(localStorage.getItem('multiview-videos') || '[]');
 const initialVideos = shared.length ? shared : saved;
 if (initialVideos.length) {
   linksInput.value = initialVideos.map(id => `https://youtu.be/${id}`).join('\n');
   buildWall(initialVideos, false);
 }
+
+function updateLinkCounter() {
+  const count = [...new Set(linksInput.value.split(/\n|,/).map(extractVideoId).filter(Boolean))].length;
+  linkCounter.textContent = `${Math.min(count, 20)} / 20 videos`;
+  linkCounter.classList.toggle('full', count >= 20);
+}
+linksInput.addEventListener('input', updateLinkCounter);
+updateLinkCounter();
