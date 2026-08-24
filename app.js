@@ -14,6 +14,7 @@ const muteButton = document.querySelector('#muteAll');
 const volume = document.querySelector('#volume');
 const volumeValue = document.querySelector('#volumeValue');
 const loopToggle = document.querySelector('#loopToggle');
+const shareButton = document.querySelector('#shareWall');
 
 let apiReady = false;
 let players = [];
@@ -71,7 +72,7 @@ function buildWall(ids, scroll = true) {
   players.forEach(player => { try { player.destroy(); } catch (_) {} });
   players = [];
   grid.innerHTML = '';
-  videoIds = [...new Set(ids)].slice(0, 12);
+  videoIds = [...new Set(ids)].slice(0, 15);
   localStorage.setItem('multiview-videos', JSON.stringify(videoIds));
   updateCount();
   if (!videoIds.length) return;
@@ -87,8 +88,24 @@ function loadLinks() {
   const ids = lines.map(extractVideoId).filter(Boolean);
   if (!lines.length) { message.textContent = 'Paste at least one YouTube link first.'; linksInput.focus(); return; }
   if (!ids.length) { message.textContent = 'No valid YouTube links were found.'; return; }
-  message.textContent = ids.length < lines.length ? `${lines.length - ids.length} invalid link(s) skipped. Maximum 12 videos.` : '';
+  const skipped = lines.length - ids.length;
+  message.textContent = ids.length > 15
+    ? `${ids.length - 15} extra video(s) skipped. Maximum 15 videos.`
+    : skipped ? `${skipped} invalid link(s) skipped.` : '';
   buildWall(ids);
+}
+
+async function copyShareLink() {
+  const url = new URL(window.location.href);
+  url.search = '';
+  url.searchParams.set('videos', videoIds.join(','));
+  try {
+    await navigator.clipboard.writeText(url.toString());
+    shareButton.textContent = '✓ Link copied';
+  } catch (_) {
+    window.prompt('Copy this share link:', url.toString());
+  }
+  setTimeout(() => { shareButton.textContent = '🔗 Copy share link'; }, 2200);
 }
 
 function removeVideo(id) {
@@ -117,6 +134,7 @@ muteButton.addEventListener('click', () => {
   players.forEach(player => { try { allMuted ? player.mute() : player.unMute(); } catch (_) {} });
   syncControlLabels();
 });
+shareButton.addEventListener('click', copyShareLink);
 volume.addEventListener('input', () => {
   volumeValue.textContent = `${volume.value}%`;
   players.forEach(player => { try { player.setVolume(Number(volume.value)); } catch (_) {} });
@@ -127,8 +145,11 @@ document.querySelectorAll('[data-columns]').forEach(button => button.addEventLis
   grid.className = `video-grid columns-${button.dataset.columns}`;
 }));
 
+const shared = new URLSearchParams(window.location.search).get('videos')
+  ?.split(',').map(id => id.trim()).filter(id => /^[\w-]{11}$/.test(id)).slice(0, 15) || [];
 const saved = JSON.parse(localStorage.getItem('multiview-videos') || '[]');
-if (saved.length) {
-  linksInput.value = saved.map(id => `https://youtu.be/${id}`).join('\n');
-  buildWall(saved, false);
+const initialVideos = shared.length ? shared : saved;
+if (initialVideos.length) {
+  linksInput.value = initialVideos.map(id => `https://youtu.be/${id}`).join('\n');
+  buildWall(initialVideos, false);
 }
